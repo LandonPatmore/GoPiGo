@@ -90,7 +90,7 @@ state: STATE
 '''
 def accelerating(state):
     if(getCurrentSpeed() < MAX_SPEED):
-        go.set_speed(getCurrentSpeed() + 10)
+        go.set_speed(getCurrentSpeed() + 25)
         go.forward()
     else:
         state.state = 0
@@ -99,8 +99,8 @@ def accelerating(state):
 Stops the rover and sets the speed of the motors to be 0
 '''
 def stopped():
-    go.set_speed(0)
     go.stop()
+    go.set_speed(0)
 
 '''
 Gets the distance to the obstacle in front of the rover
@@ -130,6 +130,8 @@ def setMotorSpeeds():
         go.set_speed(speeds[1])
 
 def main():
+    go.trim_write(-5)
+
     # Sets the intitial speed to 0
     go.set_speed(0)
 

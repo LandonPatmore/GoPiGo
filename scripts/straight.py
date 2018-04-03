@@ -14,15 +14,15 @@ stop_dist = input("Enter target stop distance ")
 
 print "Starting rover"
 
-#go.trim_write(1)
+go.trim_write(-10)
 
-# Make rover start moving
+#Make rover start moving
 set_motors(target_speed, target_speed)
 
 stopped = False
 
 while True:
-	dist = us_dist(15)
+	dist = go.us_dist(15)
 	
 	# If stopped but no object is too close, resume
 	# Else if moving and an object is too close, stop
@@ -39,6 +39,4 @@ while True:
 		set_motors(target_speed, speeds[0])
 	elif speeds[1] < speeds[0]:
 		set_motors(speeds[1], target_speed)
-	print "Motor1 speed = ", speeds[0], " | ",
-			"Motor2 speed = ", speeds[1], " | ",
-			"Sonar = ", dist
+	print "Motor1 speed = ", speeds[0], " | ", "Motor2 speed = ", speeds[1], " | ", "Sonar = ", dist

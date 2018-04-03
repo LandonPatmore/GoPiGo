@@ -14,11 +14,9 @@ go.forward()
 stopped = False
 
 while True:
-	dist = go.us_dist(25) 
-	if speed < targetSpeed: 
- 		go.increase_speed()
-	if (speed == max_speed):
-		go.set_speed(max_speed)	
+	dist = go.us_dist(15) 
+	if speed < targetSpeed:
+            go.increase_speed()
 	elif dist < stop_dist:
 		go.stop()
 		stopped = True
