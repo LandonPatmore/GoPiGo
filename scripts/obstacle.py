@@ -4,7 +4,8 @@
 from gopigo import *
 import time
 
-distance_to_stop = 45
+distance_to_stop = 20
+too_close = 40
 print "Press Enter to start"
 raw_input()
 fwd()
@@ -20,5 +21,5 @@ while True:
     print 'Dist: ', dist, 'cm'
     if dist < distance_to_stop:
         print "Stopping"
-        right()
+        stop()
         stopped = True
