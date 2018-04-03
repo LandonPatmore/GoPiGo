@@ -1,8 +1,10 @@
 import gopigo as go
+import sys
 
 STOP_DISTANCE = input('Enter stop distance: ')
 DISTANCE_TO_SLOW = input('Enter distance to slow down: ')
-SPEED = input('Enter start speed: ')
+MIN_SPEED = input('Enter minimum speed: ')
+MAX_SPEED = input('Enter max speed: ')
 
 
 '''
@@ -23,7 +25,7 @@ def checkDistance(state):
     elif distanceToObstacle() <= DISTANCE_TO_SLOW:
         print('STATE: SLOW DOWN')
         state.state = 1
-    elif (distanceToObstacle() > DISTANCE_TO_SLOW) and (getCurrentSpeed() < SPEED):
+    elif (distanceToObstacle() > DISTANCE_TO_SLOW) and (getCurrentSpeed() < MAX_SPEED):
         print('STATE: SPEED UP')
         state.state = 2
     else:
@@ -35,7 +37,7 @@ def stateCheck(state):
     if state.state == 0:
         normal()
     elif state.state == 1:
-        slowing()
+        slowing(state)
     elif state.state == 2:
         accelerating(state)
     elif state.state == 3:
@@ -44,18 +46,22 @@ def stateCheck(state):
 def normal():
     go.forward()
 
-def slowing():
-    go.set_speed(getCurrentSpeed() - 20)
-    go.forward()
+def slowing(state):
+    if(getCurrentSpeed() >= MIN_SPEED):
+        go.set_speed(getCurrentSpeed() - 10)
+        go.forward()
+    else:
+        state.state = 0
 
 def accelerating(state):
-    if(getCurrentSpeed() < SPEED):
-        go.set_speed(getCurrentSpeed() + 20)
+    if(getCurrentSpeed() < MAX_SPEED):
+        go.set_speed(getCurrentSpeed() + 10)
         go.forward()
     else:
         state.state = 0
 
 def stopped():
+    go.set_speed(0)
     go.stop()
 
 def distanceToObstacle():
@@ -66,12 +72,17 @@ def getCurrentSpeed():
     return go.read_motor_speed()[0]
 
 def main():
-    go.set_speed(SPEED)  
+    go.set_speed(0)  
     
     state = STATE()
 
     while True:
-        stateCheck(state)
+        try:
+            stateCheck(state)
+        except KeyboardInterrupt:
+            print '\nACC shut off'
+            go.stop() 
+            sys.exit()
 
 if __name__ == "__main__":
     main()
