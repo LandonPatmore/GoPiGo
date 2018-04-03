@@ -33,26 +33,18 @@ class Encoders(object):
         leftDiff = self.currentLeft - self.oldLeft
         rightDiff = self.currentRight - self.oldRight
 
-        # print 'Left diff: ', leftDiff
-        # print 'Right diff: ', rightDiff
-
         return (leftDiff, rightDiff)
 
     def getError(self, left, right):
         return left - right
     
     def updateCurrentValues(self, left, right):
-        if((left - self.currentLeft) > -1):
-            self.currentLeft = left
-        if((right - self.currentRight) > - 1):
-            self.currentRight = right
+        self.currentLeft = left
+        self.currentRight = right
 
     def replaceOldValues(self):
         self.oldLeft = self.currentLeft
         self.oldRight = self.currentRight
-
-    def __str__(self):
-        return 'oldLeft:    ' + str(self.oldLeft) + ' currentLeft:    ' + str(self.currentLeft) + '\noldRight:     ' + str(self.oldRight) + ' currentRight:    ' + str(self.currentRight)
 
 '''
 Checks the distance between the rover and the obstacle ahead and changes the state based on the distance to the obstacle
@@ -112,7 +104,7 @@ state: STATE
 '''
 def slowing(state):
     if(getCurrentSpeed() >= MIN_SPEED):
-        go.set_speed(getCurrentSpeed() - 1)
+        go.set_speed(getCurrentSpeed() - 10)
         go.forward()
     else:
         state.state = 0
@@ -127,7 +119,7 @@ state: STATE
 '''
 def accelerating(state):
     if(getCurrentSpeed() < MAX_SPEED):
-        go.set_speed(getCurrentSpeed() + 1)
+        go.set_speed(getCurrentSpeed() + 25)
         go.forward()
     else:
         state.state = 0
@@ -137,6 +129,7 @@ Stops the rover and sets the speed of the motors to be 0
 '''
 def stopped():
     go.stop()
+    go.set_speed(0)
 
 '''
 Gets the distance to the obstacle in front of the rover
@@ -151,27 +144,26 @@ def getCurrentSpeed():
 #    print('Current Speed: ', go.read_motor_speed()[1])
     return go.read_motor_speed()[1]
 
-def set_slave_motor(error):
-    go.set_right_speed(go.read_motor_speed()[0] + error)
+def set_slave_motor(speed):
+    go.set_right_speed(speed)
 
 def read_encoders():
     return (go.enc_read(0), go.enc_read(1))
 
-def calculateEncodersError(encoders):    
+def calculateEncodersError(encoders):
+#    time.sleep(0.25)
+
+    
     encoders.updateCurrentValues(*read_encoders())
-    print encoders
     diffs = encoders.getDiffs()
     error = encoders.getError(*diffs)
     
     print 'Error:   ', error
 
-    set_slave_motor(error)
-
-    encoders.replaceOldValues()
-
 def main():
     # Sets the intitial speed to 0
-    go.set_speed(50)
+    go.set_speed(0)
+    
     # Sets the initial encoder values
     encoders = Encoders(*read_encoders())
 
@@ -183,7 +175,7 @@ def main():
         try:
             calculateEncodersError(encoders)
             stateCheck(state)
-
+            
         # Shuts the ACC down when a Ctrl + c command is issued
         except KeyboardInterrupt:
             print '\nACC shut off'

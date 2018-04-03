@@ -16,9 +16,11 @@ prevLeft = go.enc_read(0)
 prevRight = go.enc_read(1)
 
 def set_slave(speed):
-    go.set_right_speed(speed)
+    #go.set_right_speed(speed) 
+    go.set_left_speed(speed)
 
 while True:
+
     time.sleep(0.25)
     left = go.enc_read(0)
     right = go.enc_read(1)
@@ -28,14 +30,14 @@ while True:
 
     print 'TICKS LEFT:      ', leftDiff, 'TICKS RIGHT:      ', rightDiff
 
-    error = leftDiff - rightDiff
+    error = rightDiff - leftDiff
 
     print 'ERROR:   ', error
 
     speeds = go.read_motor_speed()
 
     set_slave(speeds[0] + error)
-
+    #set_slave(speeds[1] + error)
     new_speeds = go.read_motor_speed()
 
     print 'LEFT MOTOR:      ', new_speeds[1], 'RIGHT MOTOR:      ', new_speeds[0]
