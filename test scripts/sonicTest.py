@@ -1,6 +1,8 @@
-import gopigo as go
+from gopigo import *
 
-while (true)
+i = 0
 
-    distance = us_distance(15)
-    print "Distance is: ", distance, "centimers"
+while (True):
+    distance = us_dist(15)
+    i += 1
+    print "Distance is: ", distance, "centimeters ", i
