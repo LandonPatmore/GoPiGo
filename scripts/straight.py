@@ -27,7 +27,7 @@ while True:
         set_motors(target_speed, target_speed)
 		stopped = False
     elif not stopped and dist < stop_dist:
-        stop()
+        go.stop()
         stopped = True
 	
 	# If one motor is moving slower, change the other to match it
