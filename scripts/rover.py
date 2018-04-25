@@ -115,6 +115,20 @@ def getCurrentSpeed():
     print('Current Speed: ', go.read_motor_speed()[0])
     return go.read_motor_speed()[0]
 
+'''
+Sets the motor speeds to match each other if they are different
+'''
+def setMotorSpeeds():
+    speeds = go.read_motor_speed()
+
+    # If one motor is moving slower, change the other to match it
+    if speeds[0] < speeds[1]:
+        print 'MOTOR: Left motor moving slower'
+        go.set_speed(speeds[0])
+    elif speeds[1] < speeds[0]:
+        print 'MOTOR: Right motor moving slower'
+        go.set_speed(speeds[1])
+
 def main():
     # Sets the intitial speed to 0
     go.set_speed(0)
@@ -126,7 +140,7 @@ def main():
     while True:
         try:
             stateCheck(state)
-            
+
         # Shuts the ACC down when a Ctrl + c command is issued
         except KeyboardInterrupt:
             print '\nACC shut off'
