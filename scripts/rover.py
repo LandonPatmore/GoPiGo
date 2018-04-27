@@ -13,15 +13,27 @@ MAX_SPEED = input('Enter max speed: ')
 2 - Speeding Up
 3 - Stop
 '''
+
+'''
+Motors:
+0 - Right
+1 - Left
+
+Encoders:
+0 - Left 
+1 - Right
+'''
+
+'''
+Class to determine the state of the rover
+'''
 class STATE(object):
     def __init__(self):
         self.state = 0
 
-# 0 - Right motor
-# 1 - Left motor
-
-# 0 - Left encoder
-# 1 - Right encoder
+'''
+Class to keep data on encoders
+'''
 class Encoders(object):
     def __init__(self, startLeft, startRight):
         self.oldLeft = startLeft
@@ -29,6 +41,9 @@ class Encoders(object):
         self.currentLeft = 0
         self.currentRight = 0
 
+    '''
+    Calculates the difference between the current ticks and the previous ticks
+    '''
     def getDiffs(self):
         leftDiff = self.currentLeft - self.oldLeft
         rightDiff = self.currentRight - self.oldRight
@@ -37,20 +52,43 @@ class Encoders(object):
         # print 'Right diff: ', rightDiff
 
         return (leftDiff, rightDiff)
+    
+    '''
+    Determines the error between the left and right encoders
 
+    Parameters
+    ----------
+    left: Int
+        Left encoder value
+    right: Int
+        Right encoder value
+    '''
     def getError(self, left, right):
         return left - right
     
+    '''
+    Updates the current values of the encoders
+    left: Int
+        Current left encoder value
+    right: Int
+        Current right encoder value
+    '''
     def updateCurrentValues(self, left, right):
         if((left - self.currentLeft) > -1):
             self.currentLeft = left
         if((right - self.currentRight) > - 1):
             self.currentRight = right
 
+    '''
+    Replaces the old values with the current values
+    '''
     def replaceOldValues(self):
         self.oldLeft = self.currentLeft
         self.oldRight = self.currentRight
 
+    '''
+    Custom toString metho
+    '''
     def __str__(self):
         return 'oldLeft:    ' + str(self.oldLeft) + ' currentLeft:    ' + str(self.currentLeft) + '\noldRight:     ' + str(self.oldRight) + ' currentRight:    ' + str(self.currentRight)
 
@@ -148,15 +186,33 @@ def distanceToObstacle():
 Gets the current speed of the rover from the motor
 '''
 def getCurrentSpeed():
-#    print('Current Speed: ', go.read_motor_speed()[1])
     return go.read_motor_speed()[1]
 
+'''
+Adds the error to the slave motor (right) so it either speeds up or slows down to match the master motor (left)
+
+Parameters
+----------
+error: Int
+    The error (difference) between the left and right encoders
+'''
 def set_slave_motor(error):
     go.set_right_speed(go.read_motor_speed()[0] + error)
 
+'''
+Gets the values of the left and right encoders
+'''
 def read_encoders():
     return (go.enc_read(0), go.enc_read(1))
 
+'''
+Calulates the error between the left and right encoders
+
+Parameters
+----------
+encoders: Tuple
+    Left and right encoder values
+'''
 def calculateEncodersError(encoders):    
     encoders.updateCurrentValues(*read_encoders())
     print encoders
