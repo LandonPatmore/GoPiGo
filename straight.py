@@ -7,7 +7,7 @@ Reads encoder values and determines correction needed.
 
 __author__ = "Marcello Cierro"
 __copyright__ = "Copyright 2018, CSC 436"
-__credits__ = ["Landon Patmore","Christian Sumano", "John Santos", "Stephen DiCerce", "Gage Davidson"]
+__credits__ = ["Landon Patmore","Christian Sumano", "John Santos", "Stephen DiCerce", "Gage Davidson", "Jim Spagnola", "Christopher Wells"]
 __license__ = "MIT"
 
 import gopigo as go
