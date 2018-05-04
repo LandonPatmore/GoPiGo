@@ -7,7 +7,7 @@ State machine controller
 
 __author__ = "Landon Patmore"
 __copyright__ = "Copyright 2018, CSC 436"
-__credits__ = ["Marcello Cierro","Christian Sumano", "John Santos", "Stephen DiCerce", "Gage Davidson"]
+__credits__ = ["Marcello Cierro","Christian Sumano", "John Santos", "Stephen DiCerce", "Gage Davidson", "Jim Spagnola", "Christopher Wells"]
 __license__ = "MIT"
 
 import gopigo as go
