@@ -1,44 +1,64 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+State machine controller
+"""
+
+__author__ = "Landon Patmore"
+__copyright__ = "Copyright 2018, CSC 436"
+__credits__ = ["Marcello Cierro","Christian Sumano", "John Santos", "Stephen DiCerce", "Gage Davidson"]
+__license__ = "MIT"
+
 import gopigo as go
 import sys
 import time
 import straight as rs
 
-ADDRESS = 0x08
-US_CMD = [117]
-ENC_CMD = [53]
+'''
+Globals:
+--------
+STOP_DISTANCE: int
+    The distance the rover will stop at
+DISTANCE_TO_SLOW: int
+    The distance the rover will start to slow
+MIN_SPEED: int
+    The minimum speed the rover will move
+MAX_SPEED: int
+    The maximum speed the rover will
+CURR_DIST: int
+    The distance to the object ahead
+STATE: int
+    The current state of the rover
 
-
+'''
 STOP_DISTANCE = input('Enter stop distance: ')
 DISTANCE_TO_SLOW = input('Enter distance to slow down: ')
 MIN_SPEED = 50
 MAX_SPEED = 100
-
 CURR_DIST = 0
-INIT_LEFT_ENC = 0
-INIT_RIGHT_ENC = 0
-
 STATE = 0
 
 '''
-0 - Normal
-1 - Slowing Down
-2 - Speeding Up
-3 - Stop
+Constants:
+-------------
+STATE:
+    0 - Normal
+    1 - Slowing Down
+    2 - Speeding Up
+    3 - Stop
 
-0 - Right motor
-1 - Left motor
+Motors:
+    0 - Right motor
+    1 - Left motor
 
-0 - Left encoder
-1 - Right encoder
+Encoders:
+    0 - Left encoder
+    1 - Right encoder
 '''
 
 '''
 Checks the distance between the rover and the obstacle ahead and changes the state based on the distance to the obstacle
-
-Parameters
-----------
-state: STATE
-    The current state of the rover
 '''
 def checkDistance():
     global STATE
@@ -58,11 +78,6 @@ def checkDistance():
 
 '''
 Checks the current state of the rover and runs the function based on the current state
-
-Parameters
-----------
-state: STATE
-    The current state of the rover
 '''
 def stateCheck():
     checkDistance()
@@ -75,11 +90,6 @@ def stateCheck():
 
 '''
 Slows the rover down if the current speed is above the MIN_SPEED
-
-Parameters
-----------
-state: STATE
-    The current state of the rover
 '''
 def slowing():
     if(getCurrentSpeed() >= MIN_SPEED):
@@ -90,11 +100,6 @@ def slowing():
 
 '''
 Accelerates the rover if the current speed is less than the MAX_SPEED
-
-Parameters
-----------
-state: STATE
-    The current state of the rover
 '''
 def accelerating():
     if(getCurrentSpeed() < MAX_SPEED):
@@ -112,6 +117,10 @@ def stopped():
 
 '''
 Gets the distance to the obstacle in front of the rover
+
+Returns:
+--------
+Current distance to the obstacle ahead
 '''
 def distanceToObstacle():
     global CURR_DIST
@@ -122,65 +131,37 @@ def distanceToObstacle():
 
 '''
 Gets the current speed of the rover from the left motor
+
+Returns:
+--------
+Motor speed
 '''
 def getCurrentSpeed():
-#    print('Current Speed: ', go.read_motor_speed()[1])
     return go.read_motor_speed()[1]
 
-def set_slave_motor(error):
-    go.set_right_speed(go.read_motor_speed()[0] + (2 * error))
+'''
+Reads the current encoder values
 
-def set_master_motor(speed):
-    if(getCurrentSpeed() + speed <= 150):
-        go.set_left_speed(getCurrentSpeed() + (speed))
-
-def set_motors(speed):
-    if(getCurrentSpeed() + speed <= 150):
-        go.set_speed(getCurrentSpeed() + (speed))
-
+Returns:
+--------
+Left and right encoder values
+'''
 def read_encoders():
     return (go.enc_read(0), go.enc_read(1))
 
-def calculateEncodersError():
-    samples = 0
-    leftTotal = 0
-    rightTotal = 0
-    while(samples < 10):
-        left, right = read_encoders()
-        print 'Left read:    ', left, ' Right read:    ', right
-        if(left != -1 and right != -1):
-            if(left >= INIT_LEFT_ENC and right >= INIT_RIGHT_ENC):
-                time.sleep(0.01)
-                samples += 1
-                leftTotal += left - INIT_LEFT_ENC
-                rightTotal += right - INIT_RIGHT_ENC
-
-    sampleLeft = leftTotal
-    sampleRight = rightTotal
-
-    error = sampleLeft - sampleRight
-    
-    print 'ERROR:   ', error
-
-    set_slave_motor(error)
-
+'''
+Main program loop
+'''
 def main():
-    # Overrides functions
-    #go.enc_read = enc_read
-    #go.us_dist = us_dist
-    # Sets the intitial speed to 0
     go.set_speed(MIN_SPEED)
 
-    global INIT_LEFT_ENC, INIT_RIGHT_ENC
     INIT_LEFT_ENC, INIT_RIGHT_ENC = read_encoders()
     print('Left:    ', INIT_LEFT_ENC, ' Right:    ', INIT_RIGHT_ENC)
     time.sleep(5)
 
-    # Program loop
     go.forward()
     while True:
         try:
-            # calculateEncodersError()
             if STATE == 3:
                 go.stop()
             else:
