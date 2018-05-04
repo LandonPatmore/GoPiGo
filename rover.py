@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
+'''
 State machine controller
-"""
+'''
 
 __author__ = "Landon Patmore"
 __copyright__ = "Copyright 2018, CSC 436"
